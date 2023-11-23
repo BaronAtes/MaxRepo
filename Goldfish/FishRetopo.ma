@@ -1,6 +1,6 @@
 //Maya ASCII 2024 scene
 //Name: FishRetopo.ma
-//Last modified: Tue, Nov 21, 2023 08:50:42 PM
+//Last modified: Wed, Nov 22, 2023 12:57:39 AM
 //Codeset: UTF-8
 requires maya "2024";
 requires -nodeType "aiOptions" -nodeType "aiAOVDriver" -nodeType "aiAOVFilter" "mtoa" "5.3.1.1";
@@ -10,7 +10,7 @@ fileInfo "product" "Maya 2024";
 fileInfo "version" "2024";
 fileInfo "cutIdentifier" "202304191415-7fa20164c6";
 fileInfo "osv" "Mac OS X 13.3.1";
-fileInfo "UUID" "127B460D-2A4C-B627-0A5C-379A5EA37EB6";
+fileInfo "UUID" "E362E981-694E-D449-3827-8C8C9282858A";
 createNode transform -s -n "persp";
 	rename -uid "98AB7C12-C548-FDC4-903F-04A463DBDB90";
 	setAttr ".v" no;
@@ -34,21 +34,21 @@ createNode camera -s -n "perspShape" -p "persp";
 createNode transform -s -n "top";
 	rename -uid "59B5D28B-4A40-1D2C-9F0D-DCB893C74F08";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" 6.8168734934287833 60.209934674732281 21.25512458459065 ;
-	setAttr ".r" -type "double3" -68.839786848860882 17.289768173374732 -1.6655364555450838e-15 ;
-	setAttr ".rp" -type "double3" -4.0245584642661925e-16 -1.3322676295501878e-15 -1.4210854715202004e-14 ;
-	setAttr ".rpt" -type "double3" -1.5049423216948941e-14 4.2440562607225852e-16 -1.32731139458412e-14 ;
+	setAttr ".t" -type "double3" 8.2703876298736478 30.10692467093126 52.536825992756086 ;
+	setAttr ".r" -type "double3" -31.251177983671024 9.7766385907014097 -9.1174781344348938e-14 ;
+	setAttr ".rp" -type "double3" -1.1102230246251565e-16 -6.6613381477509392e-16 0 ;
+	setAttr ".rpt" -type "double3" -1.6822559167516378e-14 1.8206546932345335e-14 -2.3457326873283058e-14 ;
 createNode camera -s -n "topShape" -p "top";
 	rename -uid "3B8DD128-0043-59EA-E495-C983C4FBCB22";
 	setAttr -k off ".v" no;
 	setAttr ".rnd" no;
 	setAttr ".fl" 34.999999999999986;
-	setAttr ".coi" 64.311345848547518;
+	setAttr ".coi" 60.126828654521702;
 	setAttr ".ow" 65.506497983398461;
 	setAttr ".imn" -type "string" "top";
 	setAttr ".den" -type "string" "top_depth";
 	setAttr ".man" -type "string" "top_mask";
-	setAttr ".tp" -type "double3" -0.082702446330484847 0.23480108463647298 -0.91080439556140647 ;
+	setAttr ".tp" -type "double3" -0.45815243426225405 -1.0863229592407837 1.8808350866281973 ;
 	setAttr ".hc" -type "string" "viewSet -t %camera";
 	setAttr ".ai_translator" -type "string" "perspective";
 createNode transform -s -n "front";
@@ -93,7 +93,7 @@ createNode mesh -n "FishBowlShape" -p "FishBowl";
 	setAttr -k off ".v";
 	setAttr ".vir" yes;
 	setAttr ".vif" yes;
-	setAttr ".pv" -type "double2" 0.5 0.5 ;
+	setAttr ".pv" -type "double2" 0.74912089109420776 0.74912095069885254 ;
 	setAttr ".uvst[0].uvsn" -type "string" "map1";
 	setAttr -s 2800 ".uvst[0].uvsp";
 	setAttr ".uvst[0].uvsp[0:249]" -type "float2" 0.49999994 0.5 0.99824184 0.9982419

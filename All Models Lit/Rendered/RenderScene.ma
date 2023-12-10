@@ -1,10 +1,10 @@
 //Maya ASCII 2024 scene
 //Name: RenderScene.ma
-//Last modified: Thu, Nov 30, 2023 10:15:13 PM
+//Last modified: Fri, Dec 01, 2023 04:51:20 PM
 //Codeset: UTF-8
 requires maya "2024";
-requires -nodeType "aiOptions" -nodeType "aiAOVDriver" -nodeType "aiAOVFilter" -nodeType "aiSkyDomeLight"
-		 -nodeType "aiStandardSurface" "mtoa" "5.3.4.1";
+requires -nodeType "aiOptions" -nodeType "aiAOV" -nodeType "aiAOVDriver" -nodeType "aiAOVFilter"
+		 -nodeType "aiSkyDomeLight" -nodeType "aiStandardSurface" "mtoa" "5.3.4.1";
 requires -nodeType "mayaUsdLayerManager" -dataType "pxrUsdStageData" "mayaUsdPlugin" "0.25.0";
 currentUnit -l centimeter -a degree -t film;
 fileInfo "application" "maya";
@@ -12,7 +12,7 @@ fileInfo "product" "Maya 2024";
 fileInfo "version" "2024";
 fileInfo "cutIdentifier" "202310181224-69282f2959";
 fileInfo "osv" "Mac OS X 14.1.1";
-fileInfo "UUID" "FDAC1F68-534C-582D-E6AA-C6B5CC31DD0C";
+fileInfo "UUID" "A769C106-6D4A-0161-5593-A78BE2620168";
 createNode transform -s -n "persp";
 	rename -uid "22C81875-8E4E-BB25-6623-F0854311AB8F";
 	setAttr ".v" no;
@@ -92,6 +92,7 @@ createNode spotLight -n "Chair2UV:spotLightShape1" -p "Chair2UV:spotLight1";
 	setAttr -k off ".v";
 	setAttr ".in" 10;
 	setAttr ".ca" 75;
+	setAttr ".ai_cast_shadows" no;
 	setAttr ".ai_exposure" 5;
 createNode transform -n "Chair2UV:directionalLight1";
 	rename -uid "BF4699B9-EF44-3E49-493F-33A1EA28FC88";
@@ -100,6 +101,7 @@ createNode transform -n "Chair2UV:directionalLight1";
 createNode directionalLight -n "Chair2UV:directionalLightShape1" -p "Chair2UV:directionalLight1";
 	rename -uid "EBA763FF-F947-352D-740A-369A6CAC5DDB";
 	setAttr -k off ".v";
+	setAttr ".ai_cast_shadows" no;
 	setAttr ".ai_exposure" 2.25;
 createNode transform -n "Chair2UV:group";
 	rename -uid "B042854B-4247-B15A-AC16-9FBFEBB43238";
@@ -115,6 +117,7 @@ createNode transform -n "Chair2UV:pasted__group" -p "Chair2UV:group1";
 	setAttr ".r" -type "double3" 0 0 90 ;
 createNode transform -n "Chair2UV:Diorama";
 	rename -uid "2D9CF24F-9E43-62F4-D86E-DC8DE68E7D67";
+	setAttr ".v" no;
 	setAttr ".t" -type "double3" 0 12.135409896400843 0 ;
 	setAttr ".s" -type "double3" 814.12564360987869 814.12564360987869 814.12564360987869 ;
 	setAttr ".rp" -type "double3" 0 -12.134716575172796 0 ;
@@ -174,6 +177,7 @@ createNode spotLight -n "spotLightShape1" -p "spotLight1";
 	setAttr ".cl" -type "float3" 1 0.91034997 0 ;
 	setAttr ".in" 2.1739130020141602;
 	setAttr ".ca" 123.91088453115275;
+	setAttr ".ai_cast_shadows" no;
 	setAttr ".ai_exposure" 5;
 createNode transform -n "aiSkyDomeLight1";
 	rename -uid "BF180F8C-E148-03AC-D2C5-A18E97E6E21F";
@@ -183,6 +187,8 @@ createNode aiSkyDomeLight -n "aiSkyDomeLightShape1" -p "aiSkyDomeLight1";
 	setAttr -k off ".v";
 	setAttr ".csh" no;
 	setAttr ".rcsh" no;
+	setAttr ".camera" 0;
+	setAttr ".ai_cast_shadows" no;
 	setAttr ".aal" -type "attributeAlias" {"exposure","aiExposure"} ;
 createNode transform -n "MainCamera";
 	rename -uid "3C933511-9847-C9B6-DC11-C9950AF77033";
@@ -205,7 +211,7 @@ createNode camera -n "MainCameraShape" -p "MainCamera";
 	setAttr ".cap" -type "double2" 1.41732 0.94488 ;
 	setAttr ".ff" 0;
 	setAttr ".ovr" 1.3;
-	setAttr ".coi" 2113.4410604716013;
+	setAttr ".coi" 1955.1796956889584;
 	setAttr ".ow" 30;
 	setAttr ".imn" -type "string" "camera1";
 	setAttr ".den" -type "string" "camera1_depth";
@@ -8557,6 +8563,7 @@ createNode renderLayer -n "defaultRenderLayer";
 createNode aiOptions -s -n "defaultArnoldRenderOptions";
 	rename -uid "F3C0AA59-5B4B-39D5-82F3-5391C3A1F2EA";
 	addAttr -ci true -sn "ARV_options" -ln "ARV_options" -dt "string";
+	setAttr -s 3 ".aovs";
 	setAttr ".AA_samples" 5;
 	setAttr ".version" -type "string" "5.3.1.1";
 	setAttr ".ARV_options" -type "string" "Test Resolution=100%;Color Management.Gamma=1;Color Management.Exposure=0;Background.BG=BG Color;Background.Color=0 0 0;Background.Image=;Background.Scale=1        1;Background.Offset=0        0;Background.Apply Color Management=1;Foreground.Enable FG=0;Foreground.Image=;Foreground.Scale=1        1;Foreground.Offset=0        0;Foreground.Apply Color Management=1;";
@@ -8578,8 +8585,13 @@ createNode shadingEngine -n "lambert2SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo1";
 	rename -uid "D2142436-174C-0C53-34BE-C3897FF0B7AE";
 createNode objectSet -n "set1";
@@ -8663,8 +8675,13 @@ createNode shadingEngine -n "pasted__aiStandardSurface1SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode aiStandardSurface -n "pasted__Diorama1";
 	rename -uid "2686AE10-A54D-EA3D-983C-D4A348CD33C4";
 createNode file -n "pasted__file5";
@@ -8705,8 +8722,13 @@ createNode shadingEngine -n "Chair2UV:lambert2SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Chair2UV:materialInfo1";
 	rename -uid "0A5B4DF0-C643-C6D0-E173-3D84ABD3A99E";
 createNode materialInfo -n "Chair2UV:pasted__materialInfo1";
@@ -8716,8 +8738,13 @@ createNode shadingEngine -n "Chair2UV:pasted__lambert2SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode lambert -n "Chair2UV:pasted__ChairMatte";
 	rename -uid "F7BE7884-2C44-22DB-A81C-448410FB56A0";
 	setAttr ".c" -type "float3" 0.15142401 0.22400001 0.18045442 ;
@@ -8756,8 +8783,13 @@ createNode shadingEngine -n "Chair2UV:aiStandardSurface1SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Chair2UV:materialInfo2";
 	rename -uid "AD1A78E7-9246-E735-40BA-5C8A17409690";
 createNode file -n "Chair2UV:file5";
@@ -8789,7 +8821,7 @@ createNode place2dTexture -n "Chair2UV:place2dTexture8";
 createNode bump2d -n "Chair2UV:bump2d2";
 	rename -uid "9BFDB3B8-D648-C19D-C0AE-A9BEF480CE10";
 	setAttr ".bi" 1;
-	setAttr ".vc1" -type "float3" 0 9.9999997e-06 0 ;
+	setAttr ".vc1" -type "float3" 0 1.9999999e-05 0 ;
 	setAttr ".vc2" -type "float3" 9.9999997e-06 9.9999997e-06 0 ;
 createNode nodeGraphEditorInfo -n "Chair2UV:hyperShadePrimaryNodeEditorSavedTabsInfo";
 	rename -uid "443B99CC-CD45-E41D-3A83-D096FBA8A956";
@@ -8843,8 +8875,13 @@ createNode shadingEngine -n "Custom2UV:lambert2SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Custom2UV:materialInfo1";
 	rename -uid "F6AB3067-754E-4628-5263-4F880CC24397";
 createNode file -n "Custom2UV:file1";
@@ -8868,8 +8905,13 @@ createNode shadingEngine -n "Duck:blinn1SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Duck:materialInfo1";
 	rename -uid "F835373E-A44A-6094-061A-C59FF5954950";
 createNode blinn -n "Duck:Bill_Matte";
@@ -8880,8 +8922,13 @@ createNode shadingEngine -n "Duck:blinn2SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Duck:materialInfo2";
 	rename -uid "8F3CCA54-7C40-2A70-E772-7AB17666CDAB";
 createNode groupId -n "Duck:groupId1";
@@ -8892,8 +8939,13 @@ createNode shadingEngine -n "Duck:blinn3SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Duck:materialInfo3";
 	rename -uid "70C7F81D-F54E-4BAE-37B5-19B94647A9F4";
 createNode groupId -n "Duck:groupId2";
@@ -8941,8 +8993,13 @@ createNode shadingEngine -n "Lamp2UV:lambert2SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Lamp2UV:materialInfo1";
 	rename -uid "360A5CA6-184E-4BFD-AF23-8EA8C4584DA4";
 createNode lambert -n "Lamp2UV:LampshadeMatte";
@@ -8953,8 +9010,13 @@ createNode shadingEngine -n "Lamp2UV:lambert3SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Lamp2UV:materialInfo2";
 	rename -uid "E2CFAFEB-5A4F-91F2-823E-3CA3CBFA0137";
 createNode lambert -n "Lamp2UV:LampShadeMatte";
@@ -8965,8 +9027,13 @@ createNode shadingEngine -n "Lamp2UV:lambert4SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Lamp2UV:materialInfo3";
 	rename -uid "E2F9902A-264D-05AF-D408-30BF70E97E27";
 createNode lambert -n "Hammer2UV:HammerMatte";
@@ -8977,8 +9044,13 @@ createNode shadingEngine -n "Hammer2UV:lambert2SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Hammer2UV:materialInfo1";
 	rename -uid "8DE7810F-1548-A85A-C408-A0B63A7E60FF";
 createNode shadingEngine -n "Hammer2UV:blinn1SG";
@@ -8986,8 +9058,13 @@ createNode shadingEngine -n "Hammer2UV:blinn1SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Hammer2UV:materialInfo2";
 	rename -uid "F156A99B-9840-73B5-2D5A-65AD1166DD74";
 createNode shadingEngine -n "Hammer2UV:lambert3SG";
@@ -8995,8 +9072,13 @@ createNode shadingEngine -n "Hammer2UV:lambert3SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Hammer2UV:materialInfo3";
 	rename -uid "0CCBE5E5-2740-055E-830E-CB91812EDFDF";
 createNode groupId -n "Hammer2UV:groupId2";
@@ -9009,8 +9091,13 @@ createNode shadingEngine -n "Hammer2UV:blinn2SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "Hammer2UV:materialInfo4";
 	rename -uid "83E887A5-9A4C-88F1-BD9B-6EB58A3C6E14";
 createNode file -n "Hammer2UV:file1";
@@ -9075,8 +9162,13 @@ createNode shadingEngine -n "aiStandardSurface1SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo2";
 	rename -uid "36008210-D746-E67E-6EA5-63A3DD32A4AD";
 createNode file -n "file4";
@@ -9117,8 +9209,13 @@ createNode shadingEngine -n "aiStandardSurface2SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo3";
 	rename -uid "F4D4ED6F-7D43-96B5-1516-33B121347D6C";
 createNode file -n "file8";
@@ -9158,10 +9255,15 @@ createNode shadingEngine -n "aiStandardSurface3SG";
 	rename -uid "1B6536A1-0B4C-7F57-5A46-31BA28080EF8";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
-	setAttr -s 3 ".dsm";
+	setAttr -s 2 ".dsm";
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo4";
 	rename -uid "CACAF1E7-444F-7719-A946-0E8718507A7B";
 createNode file -n "file12";
@@ -9202,8 +9304,13 @@ createNode shadingEngine -n "aiStandardSurface4SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo5";
 	rename -uid "A63F1696-B44D-1345-B686-1481DE41217C";
 createNode aiStandardSurface -n "NeoHammerTrunk";
@@ -9215,8 +9322,13 @@ createNode shadingEngine -n "aiStandardSurface5SG";
 	setAttr -s 2 ".dsm";
 	setAttr ".ro" yes;
 	setAttr -s 2 ".gn";
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo6";
 	rename -uid "86548CDD-3447-CC1B-1647-709DDDABA064";
 createNode aiStandardSurface -n "NeoLampBase";
@@ -9228,8 +9340,13 @@ createNode shadingEngine -n "aiStandardSurface6SG";
 	setAttr -s 2 ".dsm";
 	setAttr ".ro" yes;
 	setAttr -s 2 ".gn";
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo7";
 	rename -uid "E3231843-7045-FE09-3A73-6FA4537EC682";
 createNode aiStandardSurface -n "NeoBill";
@@ -9285,8 +9402,13 @@ createNode shadingEngine -n "aiStandardSurface7SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo8";
 	rename -uid "85F7C0F7-E24D-F73F-BDC1-13943FD09050";
 createNode groupId -n "groupId4";
@@ -9305,8 +9427,13 @@ createNode shadingEngine -n "aiStandardSurface8SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo9";
 	rename -uid "83ADAFC1-5647-B321-F32B-18A4656270F7";
 createNode groupId -n "groupId7";
@@ -9412,8 +9539,13 @@ createNode shadingEngine -n "aiStandardSurface9SG";
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
-		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
+	setAttr -s 3 ".aovs";
+	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
+	setAttr ".aovs[1].aov_name" -type "string" "specular";
+	setAttr ".aovs[2].aov_name" -type "string" "Z";
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
+		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
+		} ;
 createNode materialInfo -n "materialInfo10";
 	rename -uid "5B165F9D-2A47-D86E-8D80-629883F5B36B";
 createNode groupId -n "groupId8";
@@ -9487,11 +9619,26 @@ createNode bump2d -n "bump2d9";
 	setAttr ".bi" 1;
 	setAttr ".vc1" -type "float3" 0 2.9999999e-05 0 ;
 	setAttr ".vc2" -type "float3" 9.9999997e-06 9.9999997e-06 0 ;
+createNode aiAOV -n "aiAOV_diffuse";
+	rename -uid "4FF58243-B64C-D2F9-F061-48A19D37B0D1";
+	setAttr ".aovn" -type "string" "diffuse";
+	setAttr ".aovt" 5;
+createNode aiAOV -n "aiAOV_specular";
+	rename -uid "1683FEC1-7847-C6D2-FB7E-008FCC3736E3";
+	setAttr ".aovn" -type "string" "specular";
+	setAttr ".aovt" 5;
+createNode aiAOV -n "aiAOV_Z";
+	rename -uid "2C1ECC8E-EE45-2106-A3FB-C192B70C3D38";
+	setAttr ".aovn" -type "string" "Z";
+	setAttr ".aovt" 4;
+createNode aiAOVFilter -n "aiAOVFilter1";
+	rename -uid "15DCCD71-2541-378A-422B-A4AEBC17DC1B";
+	setAttr ".ai_translator" -type "string" "closest";
 createNode mayaUsdLayerManager -n "mayaUsdLayerManager1";
-	rename -uid "55B92DE5-B048-1067-D967-C4AD54D5D7DC";
+	rename -uid "2FDB2E81-A046-036F-4374-88A7EF32DC1F";
 	setAttr ".sst" -type "string" "";
 createNode nodeGraphEditorInfo -n "hyperShadePrimaryNodeEditorSavedTabsInfo";
-	rename -uid "3ED39D37-714C-53C9-EBBA-B49F98CC5DD4";
+	rename -uid "6572D19B-0247-C15E-E3D4-9E85AE5F133E";
 	setAttr ".tgi[0].tn" -type "string" "Untitled_1";
 	setAttr ".tgi[0].vl" -type "double2" -0.33521972768085107 -901.19044038038544 ;
 	setAttr ".tgi[0].vh" -type "double2" 1543.1923012771915 421.42855468250519 ;
@@ -9562,9 +9709,8 @@ select -ne :initialShadingGroup;
 	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
 	setAttr ".aovs[1].aov_name" -type "string" "specular";
 	setAttr ".aovs[2].aov_name" -type "string" "Z";
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
-		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
-		} ;
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
+		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
 select -ne :initialParticleSE;
 	addAttr -ci true -h true -sn "aal" -ln "attributeAliasList" -dt "attributeAlias";
 	setAttr ".ro" yes;
@@ -9572,9 +9718,8 @@ select -ne :initialParticleSE;
 	setAttr ".aovs[0].aov_name" -type "string" "diffuse";
 	setAttr ".aovs[1].aov_name" -type "string" "specular";
 	setAttr ".aovs[2].aov_name" -type "string" "Z";
-	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0].aovName"
-		,"ai_aov_specular","aiCustomAOVs[1].aovName","ai_aov_Z","aiCustomAOVs[2].aovName"
-		} ;
+	setAttr ".aal" -type "attributeAlias" {"ai_aov_diffuse","aiCustomAOVs[0]","ai_aov_specular"
+		,"aiCustomAOVs[1]","ai_aov_Z","aiCustomAOVs[2]"} ;
 select -ne :initialMaterialInfo;
 select -ne :defaultRenderGlobals;
 	addAttr -ci true -h true -sn "dss" -ln "defaultSurfaceShader" -dt "string";
@@ -9582,10 +9727,10 @@ select -ne :defaultRenderGlobals;
 	setAttr ".outf" 51;
 	setAttr ".imfkey" -type "string" "exr";
 	setAttr ".an" yes;
-	setAttr ".ef" 1;
+	setAttr ".ef" 71;
 	setAttr ".pff" yes;
-	setAttr ".ifp" -type "string" "bg/bg";
-	setAttr ".rv" -type "string" "v002";
+	setAttr ".ifp" -type "string" "<Version>/<RenderPass>/<RenderPass>";
+	setAttr ".rv" -type "string" "v0021";
 	setAttr ".dss" -type "string" "standardSurface1";
 select -ne :defaultResolution;
 	setAttr ".w" 1024;
@@ -9690,6 +9835,9 @@ connectAttr ":defaultArnoldDisplayDriver.msg" ":defaultArnoldRenderOptions.drive
 		 -na;
 connectAttr ":defaultArnoldFilter.msg" ":defaultArnoldRenderOptions.filt";
 connectAttr ":defaultArnoldDriver.msg" ":defaultArnoldRenderOptions.drvr";
+connectAttr "aiAOV_diffuse.msg" ":defaultArnoldRenderOptions.aovs" -na;
+connectAttr "aiAOV_specular.msg" ":defaultArnoldRenderOptions.aovs" -na;
+connectAttr "aiAOV_Z.msg" ":defaultArnoldRenderOptions.aovs" -na;
 connectAttr "file1.oc" "TableMatte.c";
 connectAttr "bump2d1.o" "TableMatte.n";
 connectAttr "TableMatte.oc" "lambert2SG.ss";
@@ -11275,6 +11423,12 @@ connectAttr "place2dTexture41.vc1" "file41.vc1";
 connectAttr "place2dTexture41.o" "file41.uv";
 connectAttr "place2dTexture41.ofs" "file41.fs";
 connectAttr "file41.oa" "bump2d9.bv";
+connectAttr ":defaultArnoldDriver.msg" "aiAOV_diffuse.out[0].drvr";
+connectAttr ":defaultArnoldFilter.msg" "aiAOV_diffuse.out[0].ftr";
+connectAttr ":defaultArnoldDriver.msg" "aiAOV_specular.out[0].drvr";
+connectAttr ":defaultArnoldFilter.msg" "aiAOV_specular.out[0].ftr";
+connectAttr ":defaultArnoldDriver.msg" "aiAOV_Z.out[0].drvr";
+connectAttr "aiAOVFilter1.msg" "aiAOV_Z.out[0].ftr";
 connectAttr "file41.msg" "hyperShadePrimaryNodeEditorSavedTabsInfo.tgi[0].ni[0].dn"
 		;
 connectAttr "NeoLampshade.msg" "hyperShadePrimaryNodeEditorSavedTabsInfo.tgi[0].ni[1].dn"
